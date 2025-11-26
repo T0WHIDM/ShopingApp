@@ -1,12 +1,15 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shop_sample/Data/repository/authentication_repository.dart';
+import 'package:flutter_shop_sample/bloc/authitication/auth_bloc.dart';
 import 'package:flutter_shop_sample/constants/colors.dart';
 import 'package:flutter_shop_sample/di/di.dart';
 import 'package:flutter_shop_sample/screens/card_screen.dart';
 import 'package:flutter_shop_sample/screens/category_screen.dart';
 import 'package:flutter_shop_sample/screens/home_screen.dart';
+import 'package:flutter_shop_sample/screens/login_screen.dart';
 import 'package:flutter_shop_sample/screens/profile_screen.dart';
 import 'package:flutter_shop_sample/utility/auth_manager.dart';
 
@@ -31,41 +34,9 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                var either = await AuthenticationRepository().login(
-                  'ali1515',
-                  '123456789',
-                );
-              },
-              child: Text('login'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                AuthManager.logOut();
-              },
-              child: Text('logout'),
-            ),
-            ValueListenableBuilder(
-              valueListenable: AuthManager.authChangeNotifire,
-              builder: (context, value, child) {
-                if (value == null || value.isEmpty) {
-                  return Text(
-                    "شماوارد نشده اید",
-                    style: TextStyle(fontSize: 20),
-                  );
-                } else {
-                  return Text(
-                    "شماوارد شده اید",
-                    style: TextStyle(fontSize: 20),
-                  );
-                }
-              },
-            ),
-          ],
+        body: BlocProvider(
+          create: (context) => AuthBloc(),
+          child: LoginScreen(),
         ),
 
         // body: IndexedStack(index: selectedindex, children: getScreen()),
