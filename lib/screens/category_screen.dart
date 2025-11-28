@@ -1,7 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shop_sample/Data/model/category.dart';
 import 'package:flutter_shop_sample/Data/repository/category_repository.dart';
+import 'package:flutter_shop_sample/bloc/category/category_bloc.dart';
+import 'package:flutter_shop_sample/bloc/category/category_event.dart';
+import 'package:flutter_shop_sample/bloc/category/category_state.dart';
 import 'package:flutter_shop_sample/constants/colors.dart';
 import 'package:flutter_shop_sample/custom_widget,dart/cached_image.dart';
 
@@ -14,6 +17,12 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   List<Category>? list;
+
+  @override
+  void initState() {
+    BlocProvider.of<CategoryBloc>(context).add(CategoryRequestEvent());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,27 +60,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: ElevatedButton(
-                onPressed: () async {
-                  var repository = CategoryRepository();
-                  var either = await repository.getCategories();
-                  either.fold(
+            BlocBuilder<CategoryBloc, CategoryState>(
+              builder: (context, state) {
+                if (state is CategoryLoadingState) {
+                  return SliverToBoxAdapter(child: CircularProgressIndicator());
+                }
+                if (state is CategoryResponseState) {
+                  return state.response.fold(
                     (l) {
-                      print(l);
+                      return SliverToBoxAdapter(child: Center(child: Text(l)));
                     },
                     (r) {
-                      setState(() {
-                        list = r;
-                      });
+                      return _listCategory(list: r);
                     },
                   );
-                },
-                child: Text('get data'),
-              ),
+                }
+                return SliverToBoxAdapter(child: Text('error'));
+              },
             ),
-
-            _listCategory(list: list),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shop_sample/bloc/authitication/auth_bloc.dart';
+import 'package:flutter_shop_sample/bloc/category/category_bloc.dart';
 import 'package:flutter_shop_sample/constants/colors.dart';
 import 'package:flutter_shop_sample/di/di.dart';
 import 'package:flutter_shop_sample/screens/card_screen.dart';
@@ -36,7 +37,6 @@ class _MyAppState extends State<MyApp> {
         //   create: (context) => AuthBloc(),
         //   child: LoginScreen(),
         // ),
-
         body: IndexedStack(index: selectedindex, children: getScreen()),
         bottomNavigationBar: ClipRRect(
           child: BackdropFilter(
@@ -160,7 +160,10 @@ class _MyAppState extends State<MyApp> {
     return <Widget>[
       ProfileScreen(),
       CardScreen(),
-      CategoryScreen(),
+      BlocProvider(
+        create: (context) => CategoryBloc(),
+        child: CategoryScreen(),
+      ),
       HomeScreen(),
     ];
   }
