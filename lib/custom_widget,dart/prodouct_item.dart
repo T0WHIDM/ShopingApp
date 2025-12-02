@@ -111,7 +111,7 @@ class ProdouctItem extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            product.price.toString(),
+                            product.realPrice.toString(),
                             style: TextStyle(
                               fontFamily: 'SB',
                               fontSize: 12,
@@ -120,7 +120,7 @@ class ProdouctItem extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            product.realPrice.toString(),
+                            product.price.toString(),
                             style: TextStyle(
                               fontFamily: 'SM',
                               fontSize: 16,
