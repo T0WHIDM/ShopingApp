@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_sample/Data/repository/product_detail_repository.dart';
 import 'package:flutter_shop_sample/constants/colors.dart';
+import 'package:flutter_shop_sample/di/di.dart';
 
 class ProdouctDetailScreen extends StatelessWidget {
   const ProdouctDetailScreen({super.key});
@@ -481,20 +483,32 @@ class AddToBasketWidget extends StatelessWidget {
           ),
         ),
         Positioned(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: SizedBox(
-                height: 53,
-                width: 160,
-                child: Center(
-                  child: Text(
-                    'افزودن به سبد خرید',
-                    style: TextStyle(
-                      fontFamily: 'SB',
-                      fontSize: 16,
-                      color: Colors.white,
+          child: GestureDetector(
+            onTap: () async {
+              IproductDetailRepository repository = locator.get();
+              var response = await repository.getProductimage();
+
+              response.fold((l) {}, (r) {
+                r.forEach((element) {
+                  print(element.imageUrl);
+                });
+              });
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: SizedBox(
+                  height: 53,
+                  width: 160,
+                  child: Center(
+                    child: Text(
+                      'افزودن به سبد خرید',
+                      style: TextStyle(
+                        fontFamily: 'SB',
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
