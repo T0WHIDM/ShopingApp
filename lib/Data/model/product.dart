@@ -9,6 +9,8 @@ class Product {
   String name;
   int quantity;
   String category;
+  int? realPrice;
+  num? percent;
 
   Product(
     this.id,
@@ -21,13 +23,16 @@ class Product {
     this.name,
     this.quantity,
     this.category,
-  );
+  ) {
+    realPrice = price + discountPrice;
+    percent = ((price - realPrice!) / price) * 100;
+  }
 
   factory Product.fromMapJson(Map<String, dynamic> jsonObject) {
     return Product(
       jsonObject['id'],
       jsonObject['collectionId'],
-      jsonObject['thumbnail'],
+      'http://startflutter.ir/api/files/${jsonObject['collectionId']}/${jsonObject['id']}/${jsonObject['thumbnail']}',
       jsonObject['description'],
       jsonObject['discount_price'],
       jsonObject['price'],

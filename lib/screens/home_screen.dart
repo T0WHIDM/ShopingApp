@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shop_sample/Data/model/banner.dart';
 import 'package:flutter_shop_sample/Data/model/category.dart';
+import 'package:flutter_shop_sample/Data/model/product.dart';
 import 'package:flutter_shop_sample/bloc/home/home_bloc.dart';
 import 'package:flutter_shop_sample/bloc/home/home_event.dart';
 import 'package:flutter_shop_sample/bloc/home/home_state.dart';
@@ -69,7 +70,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
 
                 _GetBestSellerTitle(),
-                _GetBestSellerProdouct(),
+                if (state is HomeSuccessResponseState) ...[
+                  state.productList.fold(
+                    (l) {
+                      return SliverToBoxAdapter(child: Text(l));
+                    },
+                    (r) {
+                      return _GetBestSellerProdouct(r);
+                    },
+                  ),
+                ],
+
                 _MostViewTitle(),
                 _MostViewProdouct(),
               ],
@@ -97,7 +108,7 @@ class _MostViewProdouct extends StatelessWidget {
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(left: 20.0),
-                child: ProdouctItem(),
+                child: Text('1'),
               );
             },
           ),
@@ -142,7 +153,9 @@ class _MostViewTitle extends StatelessWidget {
 }
 
 class _GetBestSellerProdouct extends StatelessWidget {
-  const _GetBestSellerProdouct({super.key});
+  List<Product> productList;
+
+  _GetBestSellerProdouct(this.productList, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -153,11 +166,11 @@ class _GetBestSellerProdouct extends StatelessWidget {
           height: 200,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 10,
+            itemCount: productList.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(left: 20.0),
-                child: ProdouctItem(),
+                child: ProdouctItem(productList[index]),
               );
             },
           ),

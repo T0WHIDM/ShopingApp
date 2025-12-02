@@ -48,10 +48,11 @@ class ProdouctListScreen extends StatelessWidget {
                   context,
                   index,
                 ) {
-                  return ProdouctItem();
+                  return Text('1');
+                  // return ProdouctItem();
                 }),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 2/2.7,
+                  childAspectRatio: 2 / 2.7,
                   crossAxisCount: 2,
                   mainAxisSpacing: 30,
                   crossAxisSpacing: 30,
