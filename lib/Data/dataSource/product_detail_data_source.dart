@@ -1,10 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_shop_sample/Data/model/product_image.dart';
+import 'package:flutter_shop_sample/Data/model/product_variant.dart';
+import 'package:flutter_shop_sample/Data/model/variant.dart';
+import 'package:flutter_shop_sample/Data/model/variants_type.dart';
 import 'package:flutter_shop_sample/di/di.dart';
 import 'package:flutter_shop_sample/utility/api_exeption.dart';
 
 abstract class IProductDetailDataSource {
   Future<List<ProductImage>> getGallery();
+  Future<List<VariantsType>> getVariantsType();
+  Future<List<Variant>> getVariants();
+  Future<List<ProductVariant>> getProductVariants();
 }
 
 class ProductDetailDataSource extends IProductDetailDataSource {
@@ -12,7 +18,7 @@ class ProductDetailDataSource extends IProductDetailDataSource {
 
   @override
   Future<List<ProductImage>> getGallery() async {
-    Map<String, String> qParames = {'filter': 'product_id = "78n4wqor3hhnkju"'};
+    Map<String, String> qParames = {'filter': 'product_id = "p4ah0vfcb3joeju"'};
 
     try {
       var respones = await _dio.get(
@@ -29,6 +35,66 @@ class ProductDetailDataSource extends IProductDetailDataSource {
       throw ApiExeption(ex.response?.statusCode, ex.response?.data['message']);
     } catch (ex) {
       throw ApiExeption(0, 'unkown error');
+    }
+  }
+
+  @override
+  Future<List<VariantsType>> getVariantsType() async {
+    try {
+      var respones = await _dio.get('collections/variants_type/records');
+
+      return respones.data['items']
+          .map<VariantsType>(
+            (jsonObject) => ProductImage.fromMapJson(jsonObject),
+          )
+          .toList();
+    } on DioException catch (ex) {
+      throw ApiExeption(ex.response?.statusCode, ex.response?.data['message']);
+    } catch (ex) {
+      throw ApiExeption(0, 'unkown error');
+    }
+  }
+
+  @override
+  Future<List<Variant>> getVariants() async {
+    try {
+      Map<String, String> qParames = {'filter': 'product_id="p4ah0vfcb3joeju"'};
+
+      var respones = await _dio.get(
+        'collections/variants/records',
+        queryParameters: qParames,
+      );
+
+      return respones.data['items']
+          .map<Variant>((jsonObject) => ProductImage.fromMapJson(jsonObject))
+          .toList();
+    } on DioException catch (ex) {
+      throw ApiExeption(ex.response?.statusCode, ex.response?.data['message']);
+    } catch (ex) {
+      throw ApiExeption(0, 'unkown error');
+    }
+  }
+
+  @override
+  Future<List<ProductVariant>> getProductVariants() async {
+    var variantTypeList = await getVariantsType();
+    var variantList = await getVariants();
+
+    List<ProductVariant> productVariantList = [];
+
+    try {
+      for (var variantType in variantTypeList) {
+        variantList
+            .where((element) => element.typeId == variantType.id)
+            .toList();
+        productVariantList.add(ProductVariant(variantList, variantType));
+      }
+
+      return productVariantList;
+    } on DioException catch (ex) {
+      throw ApiExeption(ex.response?.statusCode, ex.response?.data['message']);
+    } catch (ex) {
+      throw ApiExeption(0, 'unknown erorr');
     }
   }
 }

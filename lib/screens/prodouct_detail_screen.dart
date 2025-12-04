@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shop_sample/Data/model/product_image.dart';
+import 'package:flutter_shop_sample/Data/model/variants_type.dart';
 import 'package:flutter_shop_sample/Data/repository/product_detail_repository.dart';
 import 'package:flutter_shop_sample/bloc/product/product_bloc.dart';
 import 'package:flutter_shop_sample/bloc/product/product_event.dart';
@@ -106,63 +107,17 @@ class _ProdouctDetailScreenState extends State<ProdouctDetailScreen> {
                   ),
                 ],
 
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 20.0,
-                      right: 44,
-                      left: 44,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'انتخاب رنگ',
-                          style: TextStyle(fontSize: 12, fontFamily: 'SM'),
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(left: 10),
-                              height: 26,
-                              width: 26,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 10),
-                              height: 26,
-                              width: 26,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 10),
-                              height: 26,
-                              width: 26,
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                if (state is ProductResponseState) ...[
+                  state.productVariants.fold(
+                    (l) {
+                      return SliverToBoxAdapter(child: Text(l));
+                    },
+                    (variantList) {
+                      return SliverToBoxAdapter(child: Text('data'));
+                    },
                   ),
-                ),
+                ],
+
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(
@@ -458,11 +413,79 @@ class _ProdouctDetailScreenState extends State<ProdouctDetailScreen> {
   }
 }
 
-class galleryWidget extends StatelessWidget {
+class ColorVariants extends StatefulWidget {
+  VariantsType variantsType;
+
+  ColorVariants(this.variantsType, {super.key});
+
+  @override
+  State<ColorVariants> createState() => _ColorVariantsState();
+}
+
+class _ColorVariantsState extends State<ColorVariants> {
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, right: 44, left: 44),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              widget.variantsType.title!,
+              style: TextStyle(fontSize: 12, fontFamily: 'SM'),
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 10),
+                  height: 26,
+                  width: 26,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 10),
+                  height: 26,
+                  width: 26,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 10),
+                  height: 26,
+                  width: 26,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class galleryWidget extends StatefulWidget {
   List<ProductImage> productImagesList;
+  int selectedItem = 0;
 
   galleryWidget(this.productImagesList, {super.key});
 
+  @override
+  State<galleryWidget> createState() => _GalleryWidgetState();
+}
+
+class _GalleryWidgetState extends State<galleryWidget> {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -486,16 +509,23 @@ class galleryWidget extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.asset('assets/images/icon_star.png'),
-                      Text(
-                        '4.6',
-                        style: TextStyle(fontFamily: 'SM', fontSize: 12),
+                      Row(
+                        children: [
+                          Image.asset('assets/images/icon_star.png'),
+                          SizedBox(width: 4),
+                          Text(
+                            '4.6',
+                            style: TextStyle(fontFamily: 'SM', fontSize: 12),
+                          ),
+                        ],
                       ),
                       Spacer(),
                       SizedBox(
                         height: double.infinity,
                         child: CachedImage(
-                          imageUrl: productImagesList[0].imageUrl,
+                          imageUrl: widget
+                              .productImagesList[widget.selectedItem]
+                              .imageUrl,
                         ),
                       ),
                       Spacer(),
@@ -507,26 +537,33 @@ class galleryWidget extends StatelessWidget {
               SizedBox(
                 height: 70,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 44.0),
+                  padding: const EdgeInsets.only(left: 80.0, right: 60, top: 5),
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: productImagesList.length,
+                    itemCount: widget.productImagesList.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        width: 70,
-                        height: 70,
-                        padding: EdgeInsets.all(5),
-                        margin: EdgeInsets.only(left: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: CustomColors.gery,
-                            width: 1,
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            widget.selectedItem = index;
+                          });
+                        },
+                        child: Container(
+                          width: 70,
+                          height: 70,
+                          padding: EdgeInsets.all(5),
+                          margin: EdgeInsets.only(left: 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: CustomColors.gery,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: CachedImage(
-                          imageUrl: productImagesList[index].imageUrl,
-                          radius: 10,
+                          child: CachedImage(
+                            imageUrl: widget.productImagesList[index].imageUrl,
+                            radius: 10,
+                          ),
                         ),
                       );
                     },

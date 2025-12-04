@@ -39,7 +39,7 @@ class CategoryItemChip extends StatelessWidget {
             SizedBox(
               height: 24,
               width: 24,
-              child: CachedImage(imageUrl: category.icon),
+              child: Center(child: CachedImage(imageUrl: category.icon)),
             ),
           ],
         ),
