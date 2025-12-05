@@ -414,9 +414,9 @@ class _ProdouctDetailScreenState extends State<ProdouctDetailScreen> {
 }
 
 class ColorVariants extends StatefulWidget {
-  VariantsType variantsType;
+  final VariantsType variantsType;
 
-  ColorVariants(this.variantsType, {super.key});
+ const ColorVariants(this.variantsType, {super.key});
 
   @override
   State<ColorVariants> createState() => _ColorVariantsState();
