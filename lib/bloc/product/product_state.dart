@@ -9,8 +9,8 @@ class ProductInitState extends ProductState {}
 class ProductLoadingState extends ProductState {}
 
 class ProductResponseState extends ProductState {
-  Either<String, List<ProductImage>> getProductImages;
-  Either<String, List<ProductVariant>> productVariants;
+  Either<String, List<ProductImage>> productImages;
+  Either<String, List<ProductVariant>> productVariant;
 
-  ProductResponseState(this.getProductImages, this.productVariants);
+  ProductResponseState(this.productImages, this.productVariant);
 }

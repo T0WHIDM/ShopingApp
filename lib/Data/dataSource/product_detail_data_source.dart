@@ -83,11 +83,11 @@ class ProductDetailDataSource extends IProductDetailDataSource {
     List<ProductVariant> productVariantList = [];
 
     try {
-      for (var variantType in variantTypeList) {
+      for (var VariantsType in variantTypeList) {
         variantList
-            .where((element) => element.typeId == variantType.id)
+            .where((element) => element.typeId == VariantsType.id)
             .toList();
-        productVariantList.add(ProductVariant(variantList, variantType));
+        productVariantList.add(ProductVariant(variantList, VariantsType));
       }
 
       return productVariantList;

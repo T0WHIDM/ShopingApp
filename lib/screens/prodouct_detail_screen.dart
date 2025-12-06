@@ -97,7 +97,7 @@ class _ProdouctDetailScreenState extends State<ProdouctDetailScreen> {
                 ),
 
                 if (state is ProductResponseState) ...[
-                  state.getProductImages.fold(
+                  state.productImages.fold(
                     (l) {
                       return SliverToBoxAdapter(child: Text(l));
                     },
@@ -108,11 +108,14 @@ class _ProdouctDetailScreenState extends State<ProdouctDetailScreen> {
                 ],
 
                 if (state is ProductResponseState) ...[
-                  state.productVariants.fold(
+                  state.productVariant.fold(
                     (l) {
                       return SliverToBoxAdapter(child: Text(l));
                     },
                     (variantList) {
+                      for (var variant in variantList) {
+                        print(variant.variantsType.title);
+                      }
                       return SliverToBoxAdapter(child: Text('data'));
                     },
                   ),
@@ -416,7 +419,7 @@ class _ProdouctDetailScreenState extends State<ProdouctDetailScreen> {
 class ColorVariants extends StatefulWidget {
   final VariantsType variantsType;
 
- const ColorVariants(this.variantsType, {super.key});
+  const ColorVariants(this.variantsType, {super.key});
 
   @override
   State<ColorVariants> createState() => _ColorVariantsState();
